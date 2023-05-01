@@ -1,4 +1,7 @@
-﻿using System;
+﻿
+
+
+using System;
 using System.Collections.Generic;
 using DinoRunner;
 using Microsoft.Xna.Framework;
@@ -20,16 +23,17 @@ namespace DinoRunner
         private double _obstacleSpawnInterval = 1000;
         private SpriteFont _scoreFont;
         private double _groundSpawnTimer;
-        private const int MinObstacleSpawnInterval = 500;
+        private const int MinObstacleSpawnInterval = 1200;
         private const int MaxObstacleSpawnInterval = 2000;
         private Texture2D _backgroundTexture;
 
 
-        private enum GameState {
-                WAITING,
-                PLAYTING,
-                RESTARTING
-            }
+        private enum GameState
+        {
+            WAITING,
+            PLAYTING,
+            RESTARTING
+        }
 
         GameState _gameState = GameState.WAITING;
 
@@ -79,56 +83,59 @@ namespace DinoRunner
             {
                 _player.Update(gameTime);
 
-            _obstacleSpawnTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                _obstacleSpawnTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (_obstacleSpawnTimer > _obstacleSpawnInterval)
-            {
-                _obstacleSpawnTimer = 0;
-
-                // Generate a random interval between the minimum and maximum spawn interval constants
-                Random random = new Random();
-                _obstacleSpawnInterval = random.Next(MinObstacleSpawnInterval, MaxObstacleSpawnInterval);
-
-                _obstacles.Add(new Obstacle(Content, new Vector2(GraphicsDevice.Viewport.Width, 364)));
-            }
-
-            for (int i = _obstacles.Count - 1; i >= 0; i--)
-            {
-                _obstacles[i].Update(_gameSpeed);
-
-                if (_obstacles[i].Position.X < -_obstacles[i].Width)
+                if (_obstacleSpawnTimer > _obstacleSpawnInterval)
                 {
-                    _obstacles.RemoveAt(i);
-                }
-            }
+                    _obstacleSpawnTimer = 0;
 
-            // Check for collisions
-            foreach (var obstacle in _obstacles)
-            {
-                if (_player.Bounds.Intersects(obstacle.Bounds))
-                {
-                    // Collision detected, set player state to DEAD
-                    _player.Collide();
-                    _gameState = GameState.RESTARTING;
-                    break;
+                    // Generate a random interval between the minimum and maximum spawn interval constants
+                    Random random = new Random();
+                    _obstacleSpawnInterval = random.Next(MinObstacleSpawnInterval, MaxObstacleSpawnInterval);
+
+                    // Generate a random obstacle type (1 or 2)
+                    int obstacleType = random.Next(1, 3);
+
+                    _obstacles.Add(new Obstacle(Content, new Vector2(GraphicsDevice.Viewport.Width, 364), obstacleType));
                 }
-            }
+
+                for (int i = _obstacles.Count - 1; i >= 0; i--)
+                {
+                    _obstacles[i].Update(_gameSpeed);
+
+                    if (_obstacles[i].Position.X < -_obstacles[i].Width)
+                    {
+                        _obstacles.RemoveAt(i);
+                    }
+                }
+
+                // Check for collisions
+                foreach (var obstacle in _obstacles)
+                {
+                    if (_player.Bounds.Intersects(obstacle.Bounds))
+                    {
+                        // Collision detected, set player state to DEAD
+                        _player.Collide();
+                        _gameState = GameState.RESTARTING;
+                        break;
+                    }
+                }
                 _gameSpeed = 5 + _gameScore / 100000;
                 _gameScore += 1;
             }
-            else if(_gameState == GameState.RESTARTING)
+            else if (_gameState == GameState.RESTARTING)
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.R))
                 {
-                        Initialize();
-                        LoadContent();
-                        _gameState = GameState.PLAYTING;
-                        _player._playerState = Player.State.RUNNING;
+                    Initialize();
+                    LoadContent();
+                    _gameState = GameState.PLAYTING;
+                    _player._playerState = Player.State.RUNNING;
                 }
 
-                
+
             }
-            else if(_gameState == GameState.WAITING)
+            else if (_gameState == GameState.WAITING)
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.Enter))
                 {
@@ -163,12 +170,12 @@ namespace DinoRunner
                 }
             }
 
-            if(_gameState == GameState.PLAYTING || _gameState == GameState.RESTARTING)
+            if (_gameState == GameState.PLAYTING || _gameState == GameState.RESTARTING)
                 _spriteBatch.DrawString(_scoreFont, $"Score: {_gameScore}", new Vector2(10, 10), Color.Black);
 
-            if(_gameState == GameState.WAITING)
+            if (_gameState == GameState.WAITING)
                 _spriteBatch.DrawString(_scoreFont, "PRESS ENTER TO START", new Vector2(100, 320), Color.Black);
-            else if(_gameState == GameState.RESTARTING)
+            else if (_gameState == GameState.RESTARTING)
                 _spriteBatch.DrawString(_scoreFont, "PRESS R TO RESTART", new Vector2(100, 320), Color.Black);
 
 

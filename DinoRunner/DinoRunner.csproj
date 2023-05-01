@@ -20,6 +20,7 @@
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
     <None Remove="Content\ScoreFont.spritefont" />
+    <None Remove="Content\OBSTACLE2.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.ico" />

@@ -22,7 +22,6 @@ namespace DinoRunner
 
         public void Draw(SpriteBatch spriteBatch)
         {
-
             for(int i = 0; i < 25; i++)
             {
                 Vector2 vector1 = new Vector2(i * 32, 396);
@@ -42,9 +41,16 @@ namespace DinoRunner
         private Texture2D _texture;
         public Vector2 _position;
 
-        public Obstacle(ContentManager content, Vector2 position)
+        public Obstacle(ContentManager content, Vector2 position, int obstacleType)
         {
-            _texture = content.Load<Texture2D>("OBSTACLE");
+            if (obstacleType == 1)
+            {
+                _texture = content.Load<Texture2D>("OBSTACLE1");
+            }
+            else if (obstacleType == 2)
+            {
+                _texture = content.Load<Texture2D>("OBSTACLE2");
+            }
             _position = position;
         }
 
