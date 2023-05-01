@@ -83,6 +83,84 @@ namespace DinoRunner
 
         }
 
+        private void UpdateObstacles(GameTime gameTime) //Update Obstacles
+        {
+            _obstacleSpawnTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            if (_obstacleSpawnTimer > _obstacleSpawnInterval)
+            {
+                _obstacleSpawnTimer = 0;
+
+                // Generate a random interval between the minimum and maximum spawn interval constants
+                Random random = new Random();
+                _obstacleSpawnInterval = random.Next(MinObstacleSpawnInterval, MaxObstacleSpawnInterval);
+
+                // Generate a random obstacle type (1 or 2)
+                int obstacleType = random.Next(1, 3);
+
+                _obstacles.Add(new Obstacle(Content, new Vector2(GraphicsDevice.Viewport.Width, 364), obstacleType));
+            }
+
+            for (int i = _obstacles.Count - 1; i >= 0; i--)
+            {
+                _obstacles[i].Update(_gameSpeed);
+
+                if (_obstacles[i].Position.X < -_obstacles[i].Width)
+                {
+                    _obstacles.RemoveAt(i);
+                }
+            }
+
+            // Check for collisions
+            foreach (var obstacle in _obstacles)
+            {
+                if (_player.Bounds.Intersects(obstacle.Bounds))
+                {
+                    // Collision detected, set player state to DEAD
+                    _player.Collide();
+                    _gameState = GameState.RESTARTING;
+                    break;
+                }
+            }
+        }
+
+        private void UpdateBirds(GameTime gameTime)
+        {
+            _birdSpawnTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            if (_birdSpawnTimer > _birdSpawnInterval)
+            {
+                _birdSpawnTimer = 0;
+
+                Random random = new Random();
+                _birdSpawnInterval = random.Next(MinBirdSpawnInterval, MaxBirdSpawnInterval);
+
+                _birds.Add(new Bird(Content, new Vector2(GraphicsDevice.Viewport.Width, 260)));
+            }
+
+            for (int i = _birds.Count - 1; i >= 0; i--)
+            {
+                _birds[i].Update(gameTime, _gameSpeed);
+
+                if (_birds[i].Position.X < -_birds[i].Width)
+                {
+                    _birds.RemoveAt(i);
+                }
+            }
+
+            // Check for collisions with birds
+            foreach (var bird in _birds)
+            {
+                if (_player.Bounds.Intersects(bird.Bounds))
+                {
+                    // Collision detected, set player state to DEAD
+                    _player.Collide();
+                    _gameState = GameState.RESTARTING;
+                    break;
+                }
+            }
+        }
+
 
         protected override void Update(GameTime gameTime)
         {
@@ -93,79 +171,10 @@ namespace DinoRunner
             {
                 _player.Update(gameTime);
 
-                _obstacleSpawnTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                if (_obstacleSpawnTimer > _obstacleSpawnInterval)
-                {
-                    _obstacleSpawnTimer = 0;
+                UpdateObstacles(gameTime);
 
-                    // Generate a random interval between the minimum and maximum spawn interval constants
-                    Random random = new Random();
-                    _obstacleSpawnInterval = random.Next(MinObstacleSpawnInterval, MaxObstacleSpawnInterval);
-
-                    // Generate a random obstacle type (1 or 2)
-                    int obstacleType = random.Next(1, 3);
-
-                    _obstacles.Add(new Obstacle(Content, new Vector2(GraphicsDevice.Viewport.Width, 364), obstacleType));
-                }
-
-                for (int i = _obstacles.Count - 1; i >= 0; i--)
-                {
-                    _obstacles[i].Update(_gameSpeed);
-
-                    if (_obstacles[i].Position.X < -_obstacles[i].Width)
-                    {
-                        _obstacles.RemoveAt(i);
-                    }
-                }
-
-                // Check for collisions
-                foreach (var obstacle in _obstacles)
-                {
-                    if (_player.Bounds.Intersects(obstacle.Bounds))
-                    {
-                        // Collision detected, set player state to DEAD
-                        _player.Collide();
-                        _gameState = GameState.RESTARTING;
-                        break;
-                    }
-                }
-
-
-                _birdSpawnTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                if (_birdSpawnTimer > _birdSpawnInterval)
-                {
-                    _birdSpawnTimer = 0;
-
-                    Random random = new Random();
-                    _birdSpawnInterval = random.Next(MinBirdSpawnInterval, MaxBirdSpawnInterval);
-
-                    _birds.Add(new Bird(Content, new Vector2(GraphicsDevice.Viewport.Width, 260)));
-                }
-
-                for (int i = _birds.Count - 1; i >= 0; i--)
-                {
-                    _birds[i].Update(gameTime, _gameSpeed);
-
-                    if (_birds[i].Position.X < -_birds[i].Width)
-                    {
-                        _birds.RemoveAt(i);
-                    }
-                }
-
-                // Check for collisions with birds
-                foreach (var bird in _birds)
-                {
-                    if (_player.Bounds.Intersects(bird.Bounds))
-                    {
-                        // Collision detected, set player state to DEAD
-                        _player.Collide();
-                        _gameState = GameState.RESTARTING;
-                        break;
-                    }
-                }
-
+                UpdateBirds(gameTime);
 
                 _gameSpeed = 5 + _gameScore / 100000;
                 _gameScore += 1;
