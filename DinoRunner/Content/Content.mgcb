@@ -37,6 +37,30 @@
 /processorParam:TextureFormat=Color
 /build:BACKGROUND.png
 
+#begin BIRD1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:BIRD1.png
+
+#begin BIRD2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:BIRD2.png
+
 #begin DINO_DEAD.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -103,18 +127,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:GROUND.png
-
-#begin OBSTACLE.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:OBSTACLE.png
 
 #begin OBSTACLE1.png
 /importer:TextureImporter

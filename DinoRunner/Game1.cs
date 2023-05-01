@@ -26,6 +26,11 @@ namespace DinoRunner
         private const int MinObstacleSpawnInterval = 1200;
         private const int MaxObstacleSpawnInterval = 2000;
         private Texture2D _backgroundTexture;
+        private List<Bird> _birds;
+        private double _birdSpawnTimer;
+        private double _birdSpawnInterval = 3000;
+        private const int MinBirdSpawnInterval = 3000;
+        private const int MaxBirdSpawnInterval = 6000;
 
 
         private enum GameState
@@ -55,6 +60,7 @@ namespace DinoRunner
             _gameScore = 0;
             _obstacles = new List<Obstacle>();
             _groundSpawnTimer = 0;
+            _birds = new List<Bird>();
             base.Initialize();
         }
 
@@ -68,6 +74,10 @@ namespace DinoRunner
 
             _obstacles = new List<Obstacle>();
             _obstacleSpawnTimer = 0;
+
+            _birds = new List<Bird>();
+            _birdSpawnTimer = 0;
+
             _scoreFont = Content.Load<SpriteFont>("Font");
             _backgroundTexture = Content.Load<Texture2D>("BACKGROUND");
 
@@ -120,6 +130,43 @@ namespace DinoRunner
                         break;
                     }
                 }
+
+
+                _birdSpawnTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (_birdSpawnTimer > _birdSpawnInterval)
+                {
+                    _birdSpawnTimer = 0;
+
+                    Random random = new Random();
+                    _birdSpawnInterval = random.Next(MinBirdSpawnInterval, MaxBirdSpawnInterval);
+
+                    _birds.Add(new Bird(Content, new Vector2(GraphicsDevice.Viewport.Width, 260)));
+                }
+
+                for (int i = _birds.Count - 1; i >= 0; i--)
+                {
+                    _birds[i].Update(gameTime, _gameSpeed);
+
+                    if (_birds[i].Position.X < -_birds[i].Width)
+                    {
+                        _birds.RemoveAt(i);
+                    }
+                }
+
+                // Check for collisions with birds
+                foreach (var bird in _birds)
+                {
+                    if (_player.Bounds.Intersects(bird.Bounds))
+                    {
+                        // Collision detected, set player state to DEAD
+                        _player.Collide();
+                        _gameState = GameState.RESTARTING;
+                        break;
+                    }
+                }
+
+
                 _gameSpeed = 5 + _gameScore / 100000;
                 _gameScore += 1;
             }
@@ -168,6 +215,11 @@ namespace DinoRunner
                 {
                     obstacle.Draw(_spriteBatch);
                 }
+            }
+
+            foreach (var bird in _birds)
+            {
+                bird.Draw(_spriteBatch);
             }
 
             if (_gameState == GameState.PLAYTING || _gameState == GameState.RESTARTING)
