@@ -43,7 +43,7 @@ namespace DinoRunner
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            _graphics.PreferredBackBufferWidth = 700; // Set your desired width
+            _graphics.PreferredBackBufferWidth = 700; // Set desired width
             _graphics.PreferredBackBufferHeight = 480;
 
             // Set target elapsed time to 60 updates per second (1 second / 60 = 16.66667 ms)

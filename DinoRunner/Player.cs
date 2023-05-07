@@ -169,7 +169,6 @@ namespace DinoRunner
                 _blinkOpacity = 1f;
             }
 
-            // TODO: Add update logic for other states (running, jumping, dead)
         }
 
         public void Shoot(GameTime gameTime)
