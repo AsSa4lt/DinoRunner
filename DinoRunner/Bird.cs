@@ -13,6 +13,7 @@ namespace DinoRunner
         private float _animationInterval = 100;
         private bool _isFirstTexture;
 
+
         public Bird(ContentManager content, Vector2 position)
         {
             _birdTexture1 = content.Load<Texture2D>("BIRD1");

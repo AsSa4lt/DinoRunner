@@ -29,8 +29,8 @@ namespace DinoRunner
         private List<Bird> _birds;
         private double _birdSpawnTimer;
         private double _birdSpawnInterval = 3000;
-        private const int MinBirdSpawnInterval = 3000;
-        private const int MaxBirdSpawnInterval = 6000;
+        private const int MinBirdSpawnInterval = 1000;
+        private const int MaxBirdSpawnInterval = 2500;
 
 
         private enum GameState
@@ -135,7 +135,7 @@ namespace DinoRunner
                 Random random = new Random();
                 _birdSpawnInterval = random.Next(MinBirdSpawnInterval, MaxBirdSpawnInterval);
 
-                _birds.Add(new Bird(Content, new Vector2(GraphicsDevice.Viewport.Width, 260)));
+                _birds.Add(new Bird(Content, new Vector2(GraphicsDevice.Viewport.Width, 280)));
             }
 
             for (int i = _birds.Count - 1; i >= 0; i--)
@@ -161,6 +161,27 @@ namespace DinoRunner
             }
         }
 
+        private void CheckRocketBirdCollisions()
+        {
+            for (int i = _player.Rockets.Count - 1; i >= 0; i--)
+            {
+                var rocket = _player.Rockets[i];
+
+                for (int j = _birds.Count - 1; j >= 0; j--)
+                {
+                    var bird = _birds[j];
+
+                    if (rocket.Bounds.Intersects(bird.Bounds))
+                    {
+                        // Collision detected, remove bird and rocket
+                        _birds.RemoveAt(j);
+                        _player.Rockets.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+        }
+
 
         protected override void Update(GameTime gameTime)
         {
@@ -175,6 +196,9 @@ namespace DinoRunner
                 UpdateObstacles(gameTime);
 
                 UpdateBirds(gameTime);
+
+                CheckRocketBirdCollisions();
+
 
                 _gameSpeed = 5 + _gameScore / 100000;
                 _gameScore += 1;

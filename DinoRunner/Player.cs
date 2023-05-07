@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using System.Net.Sockets;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -26,6 +28,10 @@ namespace DinoRunner
         private bool indexImage = false;
         private Vector2 _velocity;
         private const float Gravity = 400f;
+        private Texture2D _rocketTexture;
+        public List<Rocket> Rockets { get; set; }
+        private double _lastShotTime = -1;
+        private const double ShotCooldown = 1000; // 1000 milliseconds or 1 second
 
 
         private double _animationTimer;
@@ -43,6 +49,9 @@ namespace DinoRunner
 
             _currentTexture = _waitingTexture;
             _position = new Vector2(100, 348);
+
+            _rocketTexture = content.Load<Texture2D>("ROCKET");
+            Rockets = new List<Rocket>();
         }
 
         public Rectangle Bounds
@@ -99,13 +108,43 @@ namespace DinoRunner
                 }
             }
 
+
+            if (Keyboard.GetState().IsKeyDown(Keys.F))
+            {
+                Shoot(gameTime);
+            }
+
+            for (int i = Rockets.Count - 1; i >= 0; i--)
+            {
+                Rockets[i].Update(gameTime);
+
+                if (Rockets[i].Position.X > 700)
+                {
+                    Rockets.RemoveAt(i);
+                }
+            }
             // TODO: Add update logic for other states (running, jumping, dead)
+        }
+
+        public void Shoot(GameTime gameTime)
+        {
+            if (_playerState != State.DEAD && (_lastShotTime == -1 || gameTime.TotalGameTime.TotalMilliseconds - _lastShotTime >= ShotCooldown))
+            {
+                Rockets.Add(new Rocket(_rocketTexture, new Vector2(_position.X + _currentTexture.Width, _position.Y + _currentTexture.Height / 2)));
+                _lastShotTime = gameTime.TotalGameTime.TotalMilliseconds;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             Vector2 scale = new Vector2((float)1.5, (float)1.5);
             spriteBatch.Draw(_currentTexture, _position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            foreach (var rocket in Rockets)
+            {
+                rocket.Draw(spriteBatch);
+            }
         }
     }
+
+    
 }
