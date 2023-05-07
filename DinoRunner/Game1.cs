@@ -116,10 +116,14 @@ namespace DinoRunner
             {
                 if (_player.Bounds.Intersects(obstacle.Bounds))
                 {
-                    // Collision detected, set player state to DEAD
+                    // Collision detected, call the Collide method
                     _player.Collide();
-                    _gameState = GameState.RESTARTING;
-                    break;
+
+                    if (_player.Health <= 0)
+                    {
+                        _gameState = GameState.RESTARTING;
+                        break;
+                    }
                 }
             }
         }
@@ -153,10 +157,14 @@ namespace DinoRunner
             {
                 if (_player.Bounds.Intersects(bird.Bounds))
                 {
-                    // Collision detected, set player state to DEAD
+                    // Collision detected, call the Collide method
                     _player.Collide();
-                    _gameState = GameState.RESTARTING;
-                    break;
+
+                    if (_player.Health <= 0)
+                    {
+                        _gameState = GameState.RESTARTING;
+                        break;
+                    }
                 }
             }
         }
@@ -263,6 +271,11 @@ namespace DinoRunner
             else if (_gameState == GameState.RESTARTING)
                 _spriteBatch.DrawString(_scoreFont, "PRESS R TO RESTART", new Vector2(100, 320), Color.Black);
 
+
+            for (int i = 0; i < _player.Health; i++)
+            {
+                _spriteBatch.Draw(_player._heartTexture, new Vector2(10 + i * 60, _graphics.PreferredBackBufferHeight - 60), Color.White);
+            }
 
             _spriteBatch.End();
 

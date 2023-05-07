@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -32,6 +33,12 @@ namespace DinoRunner
         public List<Rocket> Rockets { get; set; }
         private double _lastShotTime = -1;
         private const double ShotCooldown = 1000; // 1000 milliseconds or 1 second
+        public int Health { get; set; }
+        public Texture2D _heartTexture;
+        private double _invincibilityTimer;
+        private const double InvincibilityDuration = 3000; // 3000 milliseconds or 3 seconds
+        private bool _isInvincible;
+        private float _blinkOpacity = 1f;
 
 
         private double _animationTimer;
@@ -52,6 +59,9 @@ namespace DinoRunner
 
             _rocketTexture = content.Load<Texture2D>("ROCKET");
             Rockets = new List<Rocket>();
+
+            Health = 3;
+            _heartTexture = content.Load<Texture2D>("HEART");
         }
 
         public Rectangle Bounds
@@ -61,9 +71,25 @@ namespace DinoRunner
 
         public void Collide()
         {
-            _playerState = State.DEAD;
-            _currentTexture = _deadTexture;
+            if (!_isInvincible)
+            {
+                // Reduce player health
+                Health--;
+
+                if (Health <= 0)
+                {
+                    _playerState = State.DEAD;
+                    _currentTexture = _deadTexture;
+                }
+                else
+                {
+                    // Set player invincibility
+                    _isInvincible = true;
+                    _invincibilityTimer = 0;
+                }
+            }
         }
+
 
 
 
@@ -123,6 +149,28 @@ namespace DinoRunner
                     Rockets.RemoveAt(i);
                 }
             }
+
+
+            if (_isInvincible)
+            {
+                _invincibilityTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (_invincibilityTimer >= InvincibilityDuration)
+                {
+                    _isInvincible = false;
+                    _invincibilityTimer = 0;
+                }
+                else
+                {
+                    // Blinking effect
+                    _blinkOpacity = (float)Math.Sin(_invincibilityTimer * 10) * 0.5f + 0.5f;
+                }
+            }
+            else
+            {
+                _blinkOpacity = 1f;
+            }
+
             // TODO: Add update logic for other states (running, jumping, dead)
         }
 
@@ -138,13 +186,12 @@ namespace DinoRunner
         public void Draw(SpriteBatch spriteBatch)
         {
             Vector2 scale = new Vector2((float)1.5, (float)1.5);
-            spriteBatch.Draw(_currentTexture, _position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(_currentTexture, _position, null, Color.White * _blinkOpacity, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
             foreach (var rocket in Rockets)
             {
                 rocket.Draw(spriteBatch);
             }
         }
-    }
 
-    
+    }
 }
