@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using DinoRunner;
 using Microsoft.Xna.Framework;
@@ -22,7 +19,6 @@ namespace DinoRunner
         private double _obstacleSpawnTimer;
         private double _obstacleSpawnInterval = 1000;
         private SpriteFont _scoreFont;
-        private double _groundSpawnTimer;
         private const int MinObstacleSpawnInterval = 1200;
         private const int MaxObstacleSpawnInterval = 2000;
         private Texture2D _backgroundTexture;
@@ -59,7 +55,6 @@ namespace DinoRunner
         {
             _gameScore = 0;
             _obstacles = new List<Obstacle>();
-            _groundSpawnTimer = 0;
             _birds = new List<Bird>();
             base.Initialize();
         }
