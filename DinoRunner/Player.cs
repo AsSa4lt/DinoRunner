@@ -22,7 +22,6 @@ namespace DinoRunner
         private Texture2D _waitingTexture;
         private Texture2D _runningTexture1;
         private Texture2D _runningTexture2;
-        private Texture2D _jumpingTexture;
         private Texture2D _deadTexture;
         private Texture2D _currentTexture;
         private Vector2 _position;
@@ -51,7 +50,6 @@ namespace DinoRunner
             _waitingTexture = content.Load<Texture2D>("DINO_IDLE");
             _runningTexture1 = content.Load<Texture2D>("DINO_RUN1");
             _runningTexture2 = content.Load<Texture2D>("DINO_RUN2");
-            _jumpingTexture = content.Load<Texture2D>("DINO_IDLE");
             _deadTexture = content.Load<Texture2D>("DINO_DEAD");
 
             _currentTexture = _waitingTexture;
